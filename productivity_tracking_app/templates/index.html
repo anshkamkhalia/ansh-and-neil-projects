@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div>
+      <!-- Chat Window -->
+      <div class="chat-container">
+        {% if responses %} {% for response in responses %}
+        <!-- User Message -->
+        <div class="user_message">
+          <div class="bubble right">{{ response["question"] | safe}}</div>
+          <span class="name"
+            >User {{ response["date" ]}} {{ response["time"] }}</span
+          >
+        </div>
+        <!-- Chatbot Message -->
+        <div class="bot_message">
+          <div class="bubble left">{{ response["response"] | safe }}</div>
+
+          <span class="name"
+            >AI {{ response["date" ]}} {{ response["time"] }}</span
+          >
+        </div>
+        {% endfor %} {% endif %}
+      </div>
+      <div class="ask_q_container">
+        <form method="POST" action="/">
+          <input
+            type="text"
+            name="user_message"
+            placeholder="Type your question..."
+            style="width: 300px"
+            required
+          />
+          <button type="submit">Ask</button>
+        </form>
+        <!-- 
+        <form method="POST" action="/">
+            <button type="submit" name="clear_chat">Clear Chat</button>
+        </form> -->
+      </div>
+
+      <!-- To-do Window -->
+      <div>
+        <div class="todos">
+          <h2>My Tasks</h2>
+          {% for task in tasks|reverse %} {% if task.completed == False %}
+          <!-- Checkbox -->
+          <div class="todo-item">
+            <form
+              action="{{ url_for('toggle', index=tasks.index(task)) }}"
+              method="POST"
+              style="display: inline"
+            >
+              <input
+                type="checkbox"
+                id="todo{{ idx }}"
+                name="completed"
+                onchange="this.form.submit()"
+              />
+            </form>
+            <div>
+              <span>{{task["date"]}}</span>
+              <h3>
+                <label for="todo{{ tasks.index(task) }}"
+                  >{{task["name"]}}</label
+                >
+              </h3>
+              <p>{{task["desc"]}}</p>
+            </div>
+          </div>
+          {% endif %} {% endfor %}
+
+          <form action="/" method="POST" class="add-task">
+            <label for="task">Task Name</label>
+            <input type="text" name="task" placeholder="Task Name" required />
+            <label for="description">Task Description</label>
+            <input
+              type="text"
+              name="description"
+              placeholder="Task Description"
+              required
+            />
+            <button type="submit">Add</button>
+          </form>
+
+          <form action="/clear" method="POST" class="clear-tasks">
+            <button type="submit">Clear all tasks</button>
+          </form>
+
+          <form action="/archived" method="POST" class="view-archive">
+            <button type="submit">View archived tasks</button>
+          </form>
+
+          {% if view_archive %} {% for task in tasks|reverse %} {% if
+          task.completed == True %}
+          <!-- Checkbox -->
+          <div class="todo-item">
+            <form
+              action="{{ url_for('toggle', index=tasks.index(task)) }}"
+              method="POST"
+              style="display: inline"
+            >
+              <input
+                type="checkbox"
+                id="todo{{ idx }}"
+                name="completed"
+                onchange="this.form.submit()"
+              />
+            </form>
+            <div>
+              <span>{{task["date"]}}</span>
+              <h3>
+                <label for="todo{{ tasks.index(task) }}"
+                  >{{task["name"]}}</label
+                >
+              </h3>
+            </div>
+          </div>
+          {% endif %} {% endfor %} {% endif %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
