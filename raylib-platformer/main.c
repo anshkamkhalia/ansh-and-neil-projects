@@ -30,7 +30,7 @@ int main(void) {
     Texture2D soldierWalkingRight = LoadTexture("assets/soldier/walk.png");
     Texture2D soldierShootingLeft = LoadTexture("assets/soldier/shoot-left.png");
     Texture2D soldierShootingRight = LoadTexture("assets/soldier/shoot.png");
-    Texture2D soldierDead = LoadTexture(".assets/soldier/dead.png");
+    Texture2D soldierDead = LoadTexture("assets/soldier/dead.png");
 
     Texture2D zombieWalkingRightwards = LoadTexture("assets/zombie/walk.png");
     Texture2D zombieWalkingLeftwards = LoadTexture("assets/zombie/walk-left.png");
