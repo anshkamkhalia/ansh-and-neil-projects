@@ -1,0 +1,36 @@
+{% extends "layout.html" %} {% block title %}SanityStation - Home{% endblock %}
+{% block content %}
+<section
+  class="w-screen h-[800px] flex flex-col justify-center items-center bg-gradient-to-br from-sky-100 to-indigo-50 px-6 text-center"
+>
+  <h1 class="text-5xl font-extrabold leading-tight mb-6">
+    Your Mind’s Safe Harbor.<br />
+    <span class="text-sky-400">Breathe. Reflect. Grow.</span>
+  </h1>
+
+  <p class="max-w-2xl text-lg mb-10">
+    SanityStation is your digital wellness companion — offering guided
+    breathing, mood tracking, AI-powered activity suggestions, and more to help
+    you manage stress and build mindful habits.
+  </p>
+
+  <div class="flex flex-wrap justify-center gap-4 mb-10">
+    <a href="#" class="btn btn-solid">Open Dashboard</a>
+    <a href="#features" class="btn btn-outline">Explore Features</a>
+  </div>
+
+  <div
+    class="max-w-xl w-full bg-white border border-gray-800 rounded-xl p-6 shadow-md text-left"
+  >
+    <h2 class="text-lg font-semibold mb-4">Log Your Mood</h2>
+    <textarea
+      class="input-dark w-full p-2"
+      placeholder="How are you feeling today? Add notes, emojis, or tags..."
+      rows="3"
+    ></textarea>
+    <button class="mt-4 w-full btn btn-solid h-[50px]">
+      ✏️ Save Mood Entry
+    </button>
+  </div>
+</section>
+{% endblock %}

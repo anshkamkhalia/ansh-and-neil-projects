@@ -1,0 +1,30 @@
+[
+    {
+        "email": "bajajneil1@gmail.com",
+        "password": "fkdfldisjfsdkfsdkf",
+        "path": null,
+        "stats": [
+            {
+                "lesson1_complete": false,
+                "lesson2_complete": false,
+                "lesson3_complete": false,
+                "lesson4_complete": false,
+                "lesson5_complete": false
+            }
+        ]
+    },
+    {
+        "email": "bajajneil1@gmail.com",
+        "password": "fmfsdflksdj",
+        "path": null,
+        "stats": [
+            {
+                "lesson1_complete": false,
+                "lesson2_complete": false,
+                "lesson3_complete": false,
+                "lesson4_complete": false,
+                "lesson5_complete": false
+            }
+        ]
+    }
+]
