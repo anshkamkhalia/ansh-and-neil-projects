@@ -6,6 +6,14 @@
   </a>
   <div class="flex gap-4">
     <a href="/login" class="btn btn-outline">Log in</a>
-    <a href="/signup" class="btn btn-solid">Sign up</a>
+    <!-- <a href="/signup" class="btn btn-solid">Sign up</a> -->
   </div>
+
+  <script>
+fetch("/get-variable")
+  .then(response => response.json())
+  .then(data => {
+    console.log("Value from Python:", data.value);
+  });
+</script>
 </nav>

@@ -86,13 +86,6 @@
           box-shadow: 0 15px 35px rgba(56, 189, 248, 0.35);
         }
 
-        .brand-title {
-          @apply text-2xl font-bold text-sky-400;
-        }
-        .rule {
-          @apply h-[2px] my-4 w-full bg-gradient-to-r from-transparent via-sky-400 to-transparent;
-        }
-
         /* Inputs */
         .auth-input {
           @apply w-full text-base rounded-xl bg-white outline-none border-2 border-sky-200 p-3 my-2 transition-all duration-200;
@@ -136,6 +129,16 @@
         /* Navbar */
         .ss-navbar {
           @apply fixed top-0 left-0 w-screen bg-white border-b border-gray-200 z-50 px-8 py-4 flex items-center justify-between;
+        }
+
+        /* Features */
+
+        .features {
+          @apply grid grid-cols-3 gap-7 w-screen h-full p-10 place-items-center;
+        }
+
+        .features div {
+          @apply bg-white h-full rounded-xl w-[200px] shadow-md;
         }
       }
     </style>

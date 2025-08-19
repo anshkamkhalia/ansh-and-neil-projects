@@ -1,0 +1,26 @@
+<div
+  class="max-w-lg mx-auto mt-16 p-10 bg-white rounded-2xl shadow-lg border border-sky-200"
+>
+  <h1 class="text-3xl font-bold text-sky-400 mb-6 text-center">
+    How did you feel today?
+  </h1>
+  <h2 class="text-gray-700 text-base mb-8 text-center leading-relaxed">
+    Be honest with yourself. Did someone make you mad? Did you have a bad day?
+    What made you happy? Think about how you felt today, and don't worry, we
+    won't read these!
+  </h2>
+  <form action="{{ url_for('journal') }}" method="post" class="space-y-6">
+    <textarea
+      name="entry"
+      rows="6"
+      placeholder="Jot down your emotions..."
+      class="w-full px-5 py-4 border border-sky-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent transition resize-none"
+    ></textarea>
+    <button
+      type="submit"
+      class="bg-sky-400 text-white font-semibold py-3 px-8 rounded-lg hover:bg-sky-500 transition block mx-auto w-40 text-center"
+    >
+      Save Entry
+    </button>
+  </form>
+</div>
