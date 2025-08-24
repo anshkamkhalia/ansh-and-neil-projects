@@ -1,4 +1,6 @@
-<div class="max-w-lg mx-auto mt-16 p-10 bg-white rounded-2xl shadow-lg border border-sky-200">
+<div
+  class="max-w-lg mx-auto mt-16 p-10 bg-white rounded-2xl shadow-lg border border-sky-200"
+>
   <h1 class="text-3xl font-bold text-sky-400 mb-6 text-center">
     How did you feel today?
   </h1>
@@ -8,22 +10,21 @@
     won't read these!
   </h2>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="mb-6">
-        {% for category, message in messages %}
-          <h3 class="text-green-700 bg-green-100 border border-green-300 
-                     rounded-2xl p-4 text-center shadow-lg 
-                     font-bold text-xl tracking-wide">
-            🎉 {{ message }} 🎉
-          </h3>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="mb-6">
+    {% for category, message in messages %}
+    <h3
+      class="text-green-700 bg-green-100 border border-green-300 rounded-2xl p-4 text-center shadow-lg font-bold text-xl tracking-wide"
+    >
+      🎉 {{ message }} 🎉
+    </h3>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
 
   <!-- Save Entry Form -->
-  <form action="{{ url_for('journal') }}" method="post" class="space-y-6">
+  <form action="{{ url_for('journal_post') }}" method="post" class="space-y-6">
     <textarea
       name="entry"
       rows="6"
@@ -39,8 +40,14 @@
   </form>
 
   <!-- Search by Date Form -->
-  <form action="{{ url_for('journal') }}" method="get" class="space-y-4 mt-8">
-    <label for="date" class="block text-gray-700 font-medium">Search by date:</label>
+  <form
+    action="{{ url_for('journal_post') }}"
+    method="get"
+    class="space-y-4 mt-8"
+  >
+    <label for="date" class="block text-gray-700 font-medium"
+      >Search by date:</label
+    >
     <input
       type="date"
       name="date"
@@ -56,22 +63,23 @@
   </form>
 
   <!-- Display search results -->
-{% if searched_entries %}
+  {% if searched_entries %}
   <div class="mt-6 space-y-4">
-    <h3 class="text-lg font-semibold text-sky-600 text-center">Your entries:</h3>
+    <h3 class="text-lg font-semibold text-sky-600 text-center">
+      Your entries:
+    </h3>
     {% for entry in searched_entries %}
-      <div class="p-4 border border-gray-200 rounded-lg shadow bg-gray-50">
-        <div 
-          class="text-gray-800 max-h-40 overflow-y-auto whitespace-pre-wrap break-words p-2 bg-white rounded-lg border border-gray-200"
-        >
-          {{ entry.entry }}
-        </div>
-        <p class="text-sm text-gray-500 mt-2 text-right">📅 {{ entry.date }}</p>
+    <div class="p-4 border border-gray-200 rounded-lg shadow bg-gray-50">
+      <div
+        class="text-gray-800 max-h-40 overflow-y-auto whitespace-pre-wrap break-words p-2 bg-white rounded-lg border border-gray-200"
+      >
+        {{ entry.entry }}
       </div>
+      <p class="text-sm text-gray-500 mt-2 text-right">📅 {{ entry.date }}</p>
+    </div>
     {% endfor %}
   </div>
-{% elif request.args.get("date") %}
+  {% elif request.args.get("date") %}
   <p class="mt-6 text-center text-gray-500">No entries found for that date.</p>
-{% endif %}
-
+  {% endif %}
 </div>

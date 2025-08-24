@@ -1,109 +1,193 @@
 {% extends "layout.html" %} {% block title %}SanityStation - Home{% endblock %}
 {% block content %}
+<!-- Hero Section -->
 <section
-  class="w-screen h-[800px] flex flex-col justify-center items-center bg-gradient-to-br from-sky-100 to-indigo-50 px-6 text-center"
+  class="w-screen min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-sky-100 to-indigo-50 px-6 py-16 text-center relative overflow-hidden"
 >
-  <h1 class="text-5xl font-extrabold leading-tight mb-6">
+  <h1
+    class="text-5xl md:text-6xl font-extrabold leading-tight mb-6 animate__animated animate__fadeInDown"
+  >
     Your Mind’s Safe Harbor.<br />
     <span class="text-sky-400">Breathe. Reflect. Grow.</span>
   </h1>
 
-  <p class="max-w-2xl text-lg mb-10">
+  <p
+    class="max-w-2xl text-lg md:text-xl mb-10 text-gray-700 animate__animated animate__fadeInUp"
+  >
     SanityStation is your digital wellness companion — offering guided
     breathing, mood tracking, AI-powered activity suggestions, and more to help
     you manage stress and build mindful habits.
   </p>
 
-  <div class="flex flex-wrap justify-center gap-4 mb-10">
-    <a href="#" class="btn btn-solid">Open Dashboard</a>
-    <a href="#features" class="btn btn-outline">Explore Features</a>
+  <!-- Hero Buttons -->
+  <div
+    class="flex flex-wrap justify-center gap-4 mb-10 animate__animated animate__fadeInUp"
+    id="hero-buttons"
+  >
+    <a
+      href="#"
+      class="btn btn-solid bg-sky-400 text-white px-6 py-3 rounded-xl hover:bg-sky-500 transition duration-300 font-semibold"
+    >
+      Loading...
+    </a>
   </div>
 
-  <div
-    class="max-w-xl w-full bg-white border border-gray-800 rounded-xl p-6 shadow-md text-left"
-  >
-    <h2 class="text-lg font-semibold mb-4">Log Your Mood</h2>
-    <textarea
-      class="input-dark w-full p-2"
-      placeholder="How are you feeling today? Add notes, emojis, or tags..."
-      rows="3"
-    ></textarea>
-    <button class="mt-4 w-full btn btn-solid h-[50px]">
-      ✏️ Save Mood Entry
-    </button>
-  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const heroBtnsDiv = document.getElementById("hero-buttons");
+      try {
+        const res = await fetch("/get-auth");
+        const data = await res.json();
+        heroBtnsDiv.innerHTML = "";
+        if (data.logged_in) {
+          heroBtnsDiv.innerHTML += `
+            <a href="/dashboard" class="btn btn-solid bg-sky-400 text-white px-6 py-3 rounded-xl hover:bg-sky-500 transition duration-300 font-semibold">
+              Open Dashboard
+            </a>
+          `;
+        } else {
+          heroBtnsDiv.innerHTML += `
+            <a href="/login" class="btn btn-solid bg-sky-400 text-white px-6 py-3 rounded-xl hover:bg-sky-500 transition duration-300 font-semibold">
+              Log In
+            </a>
+            <a href="/login" class="btn btn-outline border-sky-400 text-sky-500 px-6 py-3 rounded-xl hover:bg-sky-100 transition duration-300 font-semibold">
+              Sign Up
+            </a>
+          `;
+        }
+      } catch (err) {
+        console.error("Failed to fetch auth:", err);
+      }
+    });
+  </script>
 </section>
+
+<!-- Features Section -->
 <section
   id="features"
   class="w-screen flex flex-col justify-center items-center bg-gradient-to-br from-sky-100 to-indigo-50 px-6 py-16 text-center"
 >
-  <h2 class="text-3xl md:text-4xl font-extrabold mb-10">
+  <h2
+    class="text-3xl md:text-4xl font-extrabold mb-12 animate__animated animate__fadeInUp"
+  >
     Features to Support Your Wellness
   </h2>
 
   <div
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-6xl"
   >
-    <!-- Journal -->
+    {% set features = [ {"icon":"📓","title":"Journal","desc":"Write down your
+    thoughts, track moods, and reflect daily."},
+    {"icon":"📚","title":"Resources","desc":"Access helpful guides, articles,
+    and tools for wellness."}, {"icon":"🤖","title":"AI Suggestions","desc":"Get
+    personalized tips and insights powered by AI."}, {"icon":"🌬","title":"Guided
+    Breathing","desc":"Practice calming breathing exercises to reduce stress."},
+    {"icon":"🎯","title":"Mindfulness Challenge","desc":"Take on small daily
+    challenges to build mindful habits."}, {"icon":"🚨","title":"Crisis
+    Support","desc":"Quick access to emergency contacts and support hotlines."},
+    ] %} {% for f in features %}
     <div
-      class="feature-card bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center"
+      class="feature-card bg-white p-10 rounded-2xl shadow-md hover:shadow-xl hover:scale-105 transition transform cursor-pointer flex flex-col items-center text-center animate__animated animate__fadeInUp"
     >
-      <h3 class="text-2xl font-bold mb-2">📓 Journal</h3>
-      <p class="text-gray-600 text-sm">
-        Write down your thoughts, track moods, and reflect daily.
+      <h3 class="text-2xl font-bold mb-2">{{ f.icon }} {{ f.title }}</h3>
+      <p class="text-gray-600 text-sm">{{ f.desc }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section
+  class="w-screen flex flex-col justify-center items-center px-6 py-16 bg-white text-center"
+  id="process"
+>
+  <h2
+    class="text-3xl md:text-4xl font-extrabold mb-12 animate__animated animate__fadeInUp"
+  >
+    How It Works
+  </h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full">
+    <div
+      class="flex flex-col items-center p-6 bg-gradient-to-tr from-sky-50 to-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1"
+    >
+      <span class="text-4xl mb-4">📝</span>
+      <h3 class="text-xl font-bold mb-2">Log Daily</h3>
+      <p class="text-gray-600 text-sm text-center">
+        Record your mood, thoughts, and reflections daily.
       </p>
     </div>
-
-    <!-- Resources -->
     <div
-      class="feature-card bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center"
+      class="flex flex-col items-center p-6 bg-gradient-to-tr from-indigo-50 to-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1"
     >
-      <h3 class="text-2xl font-bold mb-2">📚 Resources</h3>
-      <p class="text-gray-600 text-sm">
-        Access helpful guides, articles, and tools for wellness.
+      <span class="text-4xl mb-4">🧘</span>
+      <h3 class="text-xl font-bold mb-2">Practice Mindfulness</h3>
+      <p class="text-gray-600 text-sm text-center">
+        Follow guided breathing, meditation, and daily challenges.
       </p>
     </div>
-
-    <!-- AI Suggestions -->
     <div
-      class="feature-card bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center"
+      class="flex flex-col items-center p-6 bg-gradient-to-tr from-pink-50 to-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1"
     >
-      <h3 class="text-2xl font-bold mb-2">🤖 AI Suggestions</h3>
-      <p class="text-gray-600 text-sm">
-        Get personalized tips and insights powered by AI.
-      </p>
-    </div>
-
-    <!-- Guided Breathing -->
-    <div
-      class="feature-card bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center"
-    >
-      <h3 class="text-2xl font-bold mb-2">🌬 Guided Breathing</h3>
-      <p class="text-gray-600 text-sm">
-        Practice calming breathing exercises to reduce stress.
-      </p>
-    </div>
-
-    <!-- Mindfulness Challenge -->
-    <div
-      class="feature-card bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center"
-    >
-      <h3 class="text-2xl font-bold mb-2">🎯 Mindfulness Challenge</h3>
-      <p class="text-gray-600 text-sm">
-        Take on small daily challenges to build mindful habits.
-      </p>
-    </div>
-
-    <!-- Crisis Support -->
-    <div
-      class="feature-card bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center"
-    >
-      <h3 class="text-2xl font-bold mb-2">🚨 Crisis Support</h3>
-      <p class="text-gray-600 text-sm">
-        Quick access to emergency contacts and support hotlines.
+      <span class="text-4xl mb-4">🤖</span>
+      <h3 class="text-xl font-bold mb-2">Get Insights</h3>
+      <p class="text-gray-600 text-sm text-center">
+        AI-powered suggestions and personalized tips to improve your wellness.
       </p>
     </div>
   </div>
 </section>
 
+<!-- Call to Action Section -->
+<section
+  class="w-screen flex flex-col justify-center items-center px-6 py-16 bg-sky-100 text-center"
+>
+  <h2
+    class="text-3xl md:text-4xl font-extrabold mb-6 animate__animated animate__fadeInUp"
+  >
+    Ready to Begin Your Journey?
+  </h2>
+  <p class="text-gray-700 text-lg mb-8 animate__animated animate__fadeInUp">
+    Join SanityStation today and start building mindful habits.
+  </p>
+  <div
+    class="flex flex-wrap justify-center gap-4 animate__animated animate__fadeInUp"
+    id="cta-buttons"
+  >
+    <a
+      href="#"
+      class="btn btn-solid bg-sky-400 text-white px-6 py-3 rounded-xl hover:bg-sky-500 transition duration-300 font-semibold"
+    >
+      Loading...
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const ctaBtnsDiv = document.getElementById("cta-buttons");
+      try {
+        const res = await fetch("/get-auth");
+        const data = await res.json();
+        ctaBtnsDiv.innerHTML = "";
+        if (data.logged_in) {
+          ctaBtnsDiv.innerHTML += `
+            <a href="/dashboard" class="btn btn-solid bg-sky-400 text-white px-6 py-3 rounded-xl hover:bg-sky-500 transition duration-300 font-semibold">
+              Open Dashboard
+            </a>
+          `;
+        } else {
+          ctaBtnsDiv.innerHTML += `
+            <a href="/login" class="btn btn-solid bg-sky-400 text-white px-6 py-3 rounded-xl hover:bg-sky-500 transition duration-300 font-semibold">
+              Log In
+            </a>
+            <a href="/login" class="btn btn-outline border-sky-400 text-sky-500 px-6 py-3 rounded-xl hover:bg-sky-100 transition duration-300 font-semibold">
+              Sign Up
+            </a>
+          `;
+        }
+      } catch (err) {
+        console.error("Failed to fetch auth:", err);
+      }
+    });
+  </script>
+</section>
 {% endblock %}

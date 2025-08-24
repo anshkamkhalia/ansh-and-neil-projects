@@ -1,23 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
-import json
-import os
-from google import genai
-import datetime as dt
-import random
+# main.py
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+import json, random
+from datetime import datetime
+from save import write_json
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
-from datetime import datetime
+today_str = datetime.today().strftime("%Y-%m-%d")
 
-# Get today's date
-today = datetime.today()
-
-# Format as YYYY-MM-DD
-today_str = today.strftime("%Y-%m-%d")
-
-print(today_str)  # e.g. "2025-08-20"
-
+# ---------------- MINDFULNESS CHALLENGE DATA ----------------
 data = [
         "Write down 3 things you have really appreciated from the day today.",
         "Walk for 10 minutes today, without looking at your phone, focused on your surroundings.",
@@ -51,183 +43,147 @@ data = [
         "Carry some loose change today and share it with people on the street who need it more."
     ]
 
-# ------------------------------------------- HOME ------------------------------------------- 
-
+# ---------------- HOME ----------------
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# ------------------------------------------- LOGIN -------------------------------------------
+# ---------------- AUTH FUNCTIONS ----------------
+@app.route("/get-auth")
+def return_auth():
+    return jsonify({"logged_in": session.get("logged_in", False)})
+
+def check_auth():
+    if not session.get("logged_in"):
+        return redirect(url_for("authentication_page"))
+    return None
 
 @app.route("/login", methods=["GET", "POST"])
 def authentication_page():
-    global user_data # Setting global for use all around the program
-    global user_logged_in # For global use
-    user_data = {} # To keep track of the current user data
     invalid_cred = False
 
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
-        action = request.form.get("action") 
+        action = request.form.get("action")
 
-        # Handle signup
+        # Signup
         if action == "signup":
-            # If the user exists 
-            new_user_data = {
-                "email": email,
-                "password": password,
-            }
-            # Open json file and read contents
-            with open('src/data.json','r') as file:
-                try:
-                    data = json.load(file)
-                except:
-                    data = [] # Setting as empty list if json file is empty
-            
-            data.append(new_user_data) # Add new user data to past data
-
-            # Add updated data to the json file
-            with open('data.json','w') as file:
-                json.dump(data, file, indent=4)
-
-            user_data = new_user_data # Easier naming conventions
-
-            return redirect(url_for('dashboard')) 
-        
-        # Handle login
-        elif action == "login":
-            user_logged_in = False # To keep track
-
-            # Open json file and read contents
-            with open('data.json','r') as file:
-                try:
-                    data = json.load(file)
-                except:
-                    data = []
-
-            # Get the user data
+            new_user_data = {"email": email, "password": password}
             try:
-                for entry in data:
-                    if entry["email"] == email and entry["password"] == password:
-                        user_data = entry
-                        user_logged_in = True
-                        invalid_cred = False
-
-                if not user_logged_in:
-                    invalid_cred = True
+                with open("data.json", "r") as file:
+                    data = json.load(file)
             except:
-                user_data = None
+                data = []
+            data.append(new_user_data)
+            write_json("data.json", data)
 
-            if user_logged_in:
-                return redirect(url_for("dashboard"))
-            else: pass
+            # Store in session only
+            session["logged_in"] = True
+            session["email"] = email
+            return redirect(url_for("dashboard", tab="main"))
+
+        # Login
+        elif action == "login":
+            try:
+                with open("data.json", "r") as file:
+                    data = json.load(file)
+            except:
+                data = []
+
+            for entry in data:
+                if entry["email"] == email and entry["password"] == password:
+                    # Store in session only
+                    session["logged_in"] = True
+                    session["email"] = email
+                    return redirect(url_for("dashboard", tab="main"))
+
+            invalid_cred = True
 
     return render_template("auth.html", error="Invalid credentials" if invalid_cred else None)
 
-@app.route("/check-auth")
-def get_variable():
-    return jsonify(value=user_logged_in)
 
-# ------------------------------------------- DASHBOARD ROUTING -------------------------------------------
-
+# ---------------- DASHBOARD ----------------
 @app.route("/dashboard/")
 @app.route("/dashboard/<tab>", methods=["GET", "POST"])
 def dashboard(tab=None):
+    auth_redirect = check_auth()
+    if auth_redirect:
+        return auth_redirect
 
-    if not user_data:
-        return redirect(url_for('authentication_page'))
-    
     valid_tabs = {
-        None: 'main',
-        'journal': 'journal',
-        'resources': 'resources',
-        'ai': 'ai',
-        'guided_breathing': 'guided_breathing',
-        'mindfulness_challenge' : 'mindfulness_challenge',
-        'crisis_support': ' crisis_support'
+        None: "main",
+        "main": "main",
+        "journal": "journal",
+        "resources": "resources",
+        "ai": "ai",
+        "guided_breathing": "guided_breathing",
+        "mindfulness_challenge": "mindfulness_challenge",
+        "crisis_support": "crisis_support"
     }
 
     if tab not in valid_tabs:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for("dashboard", tab="main"))
 
-    return render_template('dashboard.html', tab=valid_tabs[tab])
+    context = {"tab": valid_tabs[tab]}
 
-# ------------------------------------------- JOURNAL ENTRY -------------------------------------------
+    context["username"] = session.get("email", "friend").split("@")[0]
 
-@app.route("/dashboard/journal", methods=["GET", "POST"])
-def journal():
-    if request.method == "POST":
-        entry = request.form.get("entry") 
-        entry_dict = {
-            "email": user_data["email"],
-            "entry": entry,
-            "date": today_str
-        }
-
-        # Load existing entries
-        try:
-            with open('entries.json', 'r') as f:
-                entries = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            entries = []
-
-        # Add new entry
-        entries.append(entry_dict)
-
-        # Save back to file
-        with open('entries.json', 'w') as f:
-            json.dump(entries, f, indent=4)
-
-        flash("Entry saved!", "success")
-        return redirect(url_for('dashboard', tab='journal'))
-
-    # If searching by date
-    search_date = request.args.get("date")
-    searched_entries = []
     try:
-        with open('entries.json', 'r') as f:
-            entries = json.load(f)
+        with open("entries.json", "r") as f:
+            all_entries = json.load(f)
+        user_entries = [e for e in all_entries if e["email"] == session["email"]]
+    except (FileNotFoundError, json.JSONDecodeError):
+        user_entries = []
+
+    context["number_of_entries"] = len(user_entries)
+     
+
+    # Journal entries
+    if tab == "journal":
+        search_date = request.args.get("date")
+        try:
+            with open("entries.json", "r") as f:
+                entries = json.load(f)
             if search_date:
-                searched_entries = [
-                    e for e in entries 
-                    if e["email"] == user_data["email"] and e["date"] == search_date
+                context["searched_entries"] = [
+                    e for e in entries
+                    if e["email"] == session["email"] and e["date"] == search_date
                 ]
             else:
-                # ✅ Show ALL entries for current user if no date is searched
-                searched_entries = [
-                    e for e in entries if e["email"] == user_data["email"]
+                context["searched_entries"] = [
+                    e for e in entries if e["email"] == session["email"]
                 ]
-    except (FileNotFoundError, json.JSONDecodeError):
-        searched_entries = []
+        except (FileNotFoundError, json.JSONDecodeError):
+            context["searched_entries"] = []
 
-    return render_template(
-        'dashboard.html',
-        tab="journal",
-        searched_entries=searched_entries
-    )
+    # Mindfulness challenge session data
+    if tab == "mindfulness_challenge":
+        context["accepted_challenge"] = session.get("accepted_challenge", False)
+        context["challenge"] = session.get("challenge")
+        context["success_msg"] = session.get("success_msg")
 
-# ------------------------------------------- RESOURCES -------------------------------------------
-@app.route("/dashboard/resources")
-def resources():
-    return render_template('dashboard.html', tab="resources")
+    return render_template("dashboard.html", **context)
 
-# ------------------------------------------- AI -------------------------------------------
+# ---------------- AI POST ----------------
 @app.route('/dashboard/ai', methods=["POST", "GET"])
 def ai():
+    auth_redirect = check_auth()
+    if auth_redirect:
+        return auth_redirect
+
+
     from google import genai
     import os
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = "AIzaSyA9WkZdmSS-PGoq6kdL1UfXVfBj8asFT_c"
     
     if not api_key:
         return jsonify({"reply": "API key not found. Please set GEMINI_API_KEY."})
 
     client = genai.Client(api_key=api_key)
-
-    if not user_data:
-        return jsonify({"reply": "User not logged in."})
+  
     global username
-    username = user_data['email'].split("@")[0]
+    username = session.get("email", "friend").split("@")[0]
 
     if request.method == "POST":
         user_message = request.json.get("message")
@@ -263,38 +219,56 @@ def ai():
     # GET request just renders the page
     return render_template("dashboard.html", tab="ai")
 
-from flask import session
 
-@app.route("/mindfulness_challenge", methods=["GET", "POST"])
-def mindfulness_challenge():
+# ---------------- JOURNAL POST ----------------
+@app.route("/dashboard/journal", methods=["POST"])
+def journal_post():
+    auth_redirect = check_auth()
+    if auth_redirect:
+        return auth_redirect
+
+    entry = request.form.get("entry")
+    entry_dict = {
+        "email": session["email"],
+        "entry": entry,
+        "date": today_str
+    }
+
+    try:
+        with open("entries.json", "r") as f:
+            entries = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        entries = []
+
+    entries.append(entry_dict)
+    write_json("entries.json", entries)
+
+    flash("Entry saved!", "success")
+    return redirect(url_for("dashboard", tab="journal"))
+
+# ---------------- MINDFULNESS CHALLENGE POST ----------------
+@app.route("/mindfulness_challenge", methods=["POST"])
+def mindfulness_challenge_post():
+    auth_redirect = check_auth()
+    if auth_redirect:
+        return auth_redirect
+
     if "accepted_challenge" not in session:
         session["accepted_challenge"] = False
         session["challenge"] = None
         session["success_msg"] = None
 
-    if request.method == "POST":
-        form_type = request.form.get("form_type")
-        if form_type == "get_challenge":
-            session["challenge"] = random.choice(data)
-            session["accepted_challenge"] = True
-            session["success_msg"] = None
-        elif form_type == "finish_challenge":
-            username = user_data['email'].split("@")[0]  # get first part of email
-            session["success_msg"] = f"Great job, {username}!"
+    form_type = request.form.get("form_type")
+    if form_type == "get_challenge":
+        session["challenge"] = random.choice(data)
+        session["accepted_challenge"] = True
+        session["success_msg"] = None
+    elif form_type == "finish_challenge":
+        username = session.get("email", "friend").split("@")[0]
+        session["success_msg"] = f"Great job, {username}!"
 
-    return render_template(
-        "dashboard.html",
-        tab='mindfulness_challenge',
-        accepted_challenge=session.get("accepted_challenge"),
-        challenge=session.get("challenge"),
-        success_msg=session.get("success_msg"))
-    
+    return redirect(url_for("dashboard", tab="mindfulness_challenge"))
 
-@app.route("/dashboard/crisis_support")
-def crisis_support():
-    return render_template("dashboard.html", tab='crisis_support')
-
-# ------------------------------------------- RUN -------------------------------------------
-
+# ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,99 +1,91 @@
 {% extends "layout.html" %} {% block title %}Dashboard{% endblock %} {% block
 content %}
+<script>
+  // Hides navbar
+  document.getElementsByClassName("ss-navbar")[0].remove();
+  document.getElementsByTagName("main")[0].classList.remove("pt-[75px]");
+</script>
+
+<style>
+  .ss-navbar {
+    display: none !important;
+  }
+</style>
+
 <div
   class="flex flex-row min-h-screen bg-gradient-to-br from-sky-50 to-indigo-50"
 >
   <!-- Sidebar -->
   <aside
-    class="w-[220px] border-r border-gray-300 bg-white/70 backdrop-blur-lg flex flex-col p-5 gap-4 shadow-sm"
+    class="w-[220px] border-r border-gray-300 bg-white/70 backdrop-blur-lg flex flex-col p-5 shadow-sm"
   >
-    <h2 class="text-xl font-extrabold text-sky-500 tracking-tight mb-4">
-      SanityStation
-    </h2>
+    <a href="/">
+      <img
+        width="30"
+        height="30"
+        src="https://img.icons8.com/color/48/foam-bubbles.png"
+        alt="foam-bubbles"
+      />
+      <h2 class="flex text-xl font-extrabold text-sky-500 tracking-tight mb-8">
+        SanityStation
+      </h2>
+    </a>
 
     <!-- Main Dashboard -->
     <a
       href="/dashboard/"
-      class="px-3 py-2 rounded-lg font-semibold hover:bg-sky-100 transition 
-      {{ 'bg-sky-200 text-sky-800' if tab == 'main' else 'text-gray-800' }}"
+      class="px-3 py-1 rounded-md hover:bg-sky-50 
+      {{ 'bg-sky-200 text-sky-800' if tab == 'main' else 'text-gray-700' }}"
     >
-      🏠 Dashboard
+      🏠 &nbsp;Dashboard
     </a>
 
     <!-- Mindfulness & Tools -->
-    <details class="group">
-      <summary
-        class="flex items-center justify-between px-3 py-2 rounded-lg font-semibold text-gray-800 hover:bg-sky-100 cursor-pointer transition"
-      >
-        🌱 Mindfulness Tools
-        <svg
-          class="w-4 h-4 transform transition-transform duration-300 group-open:rotate-180"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </summary>
-      <div class="ml-4 mt-2 flex flex-col gap-1">
-        <a
-          href="/dashboard/journal"
-          class="px-3 py-1 rounded-md hover:bg-sky-50 
-          {{ 'bg-sky-200 text-sky-800' if tab == 'journal' else 'text-gray-700' }}"
-        >
-          📓 Journal
-        </a>
-        <a
-          href="/dashboard/resources"
-          class="px-3 py-1 rounded-md hover:bg-sky-50 
-          {{ 'bg-sky-200 text-sky-800' if tab == 'resources' else 'text-gray-700' }}"
-        >
-          📚 Resources
-        </a>
-        <a
-          href="/dashboard/ai"
-          class="px-3 py-1 rounded-md hover:bg-sky-50 
-          {{ 'bg-sky-200 text-sky-800' if tab == 'ai' else 'text-gray-700' }}"
-        >
-          🤖 AI Suggestions
-        </a>
-        <a
-          href="/dashboard/guided_breathing"
-          class="px-3 py-1 rounded-md hover:bg-sky-50 
-          {{ 'bg-sky-200 text-sky-800' if tab == 'guided_breathing' else 'text-gray-700' }}"
-        >
-          🌬 Guided Breathing
-        </a>
-        <a
-          href="/dashboard/mindfulness_challenge"
-          class="px-3 py-1 rounded-md hover:bg-sky-50 
-          {{ 'bg-sky-200 text-sky-800' if tab == 'mindfulness_challenge' else 'text-gray-700' }}"
-        >
-          🎯 Mindfulness Challenge
-        </a>
-        <a
-          href="/dashboard/crisis_support"
-          class="px-3 py-1 rounded-md hover:bg-sky-50 
-          {{ 'bg-sky-200 text-sky-800' if tab == 'crisis_support' else 'text-gray-700' }}"
-        >
-          🚨 Crisis Support
-        </a>
-      </div>
-    </details>
 
-    <!-- Settings -->
-    <!-- <a
-      href="/dashboard/settings"
-      class="px-3 py-2 rounded-lg font-semibold hover:bg-sky-100 transition 
-      {{ 'bg-sky-200 text-sky-800' if tab == 'settings' else 'text-gray-800' }}"
-    >
-      ⚙️ Settings
-    </a> -->
+    <div class="mt-2 flex flex-col gap-2">
+      <a
+        href="/dashboard/journal"
+        class="px-3 py-1 rounded-md hover:bg-sky-50 
+          {{ 'bg-sky-200 text-sky-800' if tab == 'journal' else 'text-gray-700' }}"
+      >
+        📓 &nbsp;Journal
+      </a>
+      <a
+        href="/dashboard/resources"
+        class="px-3 py-1 rounded-md hover:bg-sky-50 
+          {{ 'bg-sky-200 text-sky-800' if tab == 'resources' else 'text-gray-700' }}"
+      >
+        📚 &nbsp;Resources
+      </a>
+      <a
+        href="/dashboard/ai"
+        class="px-3 py-1 rounded-md hover:bg-sky-50 
+          {{ 'bg-sky-200 text-sky-800' if tab == 'ai' else 'text-gray-700' }}"
+      >
+        🤖 &nbsp;AI Therapist
+      </a>
+      <a
+        href="/dashboard/guided_breathing"
+        class="px-3 py-1 rounded-md hover:bg-sky-50 
+          {{ 'bg-sky-200 text-sky-800' if tab == 'guided_breathing' else 'text-gray-700' }}"
+      >
+        🌬 &nbsp;Guided Breathing
+      </a>
+      <a
+        href="/dashboard/mindfulness_challenge"
+        class="px-3 py-1 rounded-md hover:bg-sky-50 
+          {{ 'bg-sky-200 text-sky-800' if tab == 'mindfulness_challenge' else 'text-gray-700' }}"
+      >
+        🎯 &nbsp;Mindfulness Challenge
+      </a>
+      <a
+        href="/dashboard/crisis_support"
+        class="px-3 py-1 rounded-md hover:bg-sky-50 
+          {{ 'bg-sky-200 text-sky-800' if tab == 'crisis_support' else 'text-gray-700' }}"
+      >
+        🚨 &nbsp;Crisis Support
+      </a>
+    </div>
   </aside>
 
   <!-- Main Content -->
